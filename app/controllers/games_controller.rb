@@ -2,8 +2,8 @@ class GameCreator
   def game
     white = cards.pop(2)
     black = cards.pop(2)
-    position = {cards: cards, knights: [[7,0], [7,7], [0,0], [0,7]]}
-    Game.create!(position: position, white: white, black: black)
+    starting_pos = [ [[7,0], [7,7], [0,0], [0,7]] ]
+    Game.create!(cards: cards, position: starting_pos, white: white, black: black)
   end
 
   def cards
@@ -21,10 +21,10 @@ class GamesController < ActionController::API
   end
 
   def show
-    game = Game.last #Game.find_by(id: params[:id]) || GameCreator.new.game
+    game = Game.find_by(id: params[:id]) || GameCreator.new.game
 
-    cards = game.position[:cards]
-    knights = game.position[:knights]
+    cards = game.cards
+    knights = game.position.last
     white = game.white
     black = game.black
 
@@ -35,9 +35,16 @@ class GamesController < ActionController::API
   end
 
   def move
+    game = Game.last
+    position = params[:game][:position]
+    move = params[:game][:move]
+    game.add_move(position, move)
     #game = Game.find_by(id: params[:id])
-    #game.moves.create(order: game.moves.count + 1, move: '', color: '')
-    puts params
+    if game.save
+      render json: {success: true }
+    else
+      render json: {failure: true }
+    end
   end
 
   def cards

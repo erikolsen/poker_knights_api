@@ -16,7 +16,8 @@ ActiveRecord::Schema.define(version: 2018_09_11_223048) do
   enable_extension "plpgsql"
 
   create_table "games", force: :cascade do |t|
-    t.string "position"
+    t.string "cards"
+    t.text "position"
     t.string "white"
     t.string "black"
     t.datetime "created_at", null: false
