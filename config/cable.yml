@@ -6,5 +6,5 @@ test:
 
 production:
   adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
+  url: redis://redistogo:c1fdca9cbbeadd000341105c1859300b@spinyfin.redistogo.com:10131/
   channel_prefix: poker-knights-api_production
