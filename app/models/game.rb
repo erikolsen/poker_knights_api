@@ -10,7 +10,6 @@ class Game < ApplicationRecord
 
   def add_move(pos, move)
     new_position = position.last.each_with_index.map{ |current,idx| idx == pos ? move : current }
-    puts new_position
     position << new_position
   end
 end

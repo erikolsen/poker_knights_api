@@ -3,7 +3,7 @@ class GameCreator
     white = cards.pop(2)
     black = cards.pop(2)
     starting_pos = [ [[7,0], [7,7], [0,0], [0,7]] ]
-    Game.create!(cards: cards, position: starting_pos, white: white, black: black)
+    Game.create!(cards: cards.take(24), position: starting_pos, white: white, black: black)
   end
 
   def cards
@@ -35,12 +35,12 @@ class GamesController < ActionController::API
   end
 
   def move
-    game = Game.last
+    game = Game.find(params[:game_id])
     position = params[:game][:position]
     move = params[:game][:move]
     game.add_move(position, move)
-    #game = Game.find_by(id: params[:id])
     if game.save
+      MovesChannel.broadcast_to game, {move: game.position.last}
       render json: {success: true }
     else
       render json: {failure: true }
