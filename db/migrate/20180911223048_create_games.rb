@@ -1,10 +1,11 @@
 class CreateGames < ActiveRecord::Migration[5.2]
   def change
     create_table :games do |t|
-      t.string :cards
-      t.text :position
-      t.string :white
-      t.string :black
+      t.text :slug
+      t.integer :stack
+      t.integer :big_blind
+      t.integer :small_blind
+      t.integer :timer
 
       t.timestamps
     end

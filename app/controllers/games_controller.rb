@@ -1,55 +1,40 @@
 class GameCreator
-  def game
-    white = cards.pop(2)
-    black = cards.pop(2)
-    starting_pos = [ [[7,0], [7,7], [0,0], [0,7]] ]
-    Game.create!(cards: cards.take(24), position: starting_pos, white: white, black: black)
+  attr_reader :slug, :stack, :big_blind, :small_blind, :timer, :player_one, :player_two, :game
+
+  def initialize(params)
+    @slug = params[:gameId]
+    @stack = params[:stack].to_i
+    @big_blind = params[:blinds].to_i
+    @small_blind = params[:blinds].to_f / 2
+    @timer = params[:timer].to_i
+    @player_one = params[:playerOne]
+    @player_two = params[:playerTwo]
   end
 
-  def cards
-    @cards ||= begin
-      suits = ['♠', '♥', '♦', '♣']
-      num = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-      suits.map{|suit| num.map{|rank| rank + suit }}.flatten.shuffle
+  def setup_game!
+    begin
+      @game = Game.create(slug: slug, stack: stack, big_blind: big_blind, small_blind: small_blind, timer: timer)
+      @game.add_player(player_one)
+      @game.add_player(player_two)
+      @game.deal!
+      return true
+    rescue => e
+      puts '*' * 80
+      puts e
+      puts '*' * 80
+      return false
     end
+
   end
 end
 
 class GamesController < ActionController::API
-  def index
-    render json: {board: ['index']}
-  end
-
-  def show
-    game = Game.find_by(id: params[:id]) || GameCreator.new.game
-
-    cards = game.cards
-    knights = game.position.last
-    white = game.white
-    black = game.black
-
-    render json: {white: {hand: white},
-                  black: {hand: black},
-                  knights: knights,
-                  cards: cards }
-  end
-
-  def move
-    game = Game.find(params[:game_id])
-    position = params[:game][:position]
-    move = params[:game][:move]
-    game.add_move(position, move)
-    if game.save
-      MovesChannel.broadcast_to game, {move: game.position.last}
-      render json: {success: true }
+  def create
+    creator = GameCreator.new(params)
+    if creator.setup_game!
+      render json: {success: 'Game Starting'}
     else
-      render json: {failure: true }
+      render json: {failure: 'Game failed to start'}
     end
-  end
-
-  def cards
-    suits = ['♠', '♥', '♦', '♣']
-    num = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-    suits.map{|suit| num.map{|rank| rank + suit }}.flatten.shuffle
   end
 end
