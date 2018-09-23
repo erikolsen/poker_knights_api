@@ -16,16 +16,21 @@ class Game < ApplicationRecord
   end
 
   def deal!
-    cards = Deck.shuffle!
-    white = cards.pop(2)
-    black = cards.pop(2)
-    hand = Hand.create(cards: cards.take(24),
-                       sequence: hands.count + 1,
-                       game_id: id,
-                       position: Hand::STARTING_POSITION,
-                       white: white,
-                       black: black)
-    3.times { |round| hand.rounds << Round.create(sequence: round + 1, pot: 0) }
+    begin
+      cards = Deck.shuffle!
+      white = cards.pop(2)
+      black = cards.pop(2)
+      hand = Hand.create(cards: cards.take(24),
+                         sequence: hands.count + 1,
+                         game_id: id,
+                         position: Hand::STARTING_POSITION,
+                         white: white,
+                         black: black)
+      3.times { |round| hand.rounds << Round.create(sequence: round + 1, pot: 0) }
+      return true
+    rescue => e
+      raise e
+    end
   end
 
 end

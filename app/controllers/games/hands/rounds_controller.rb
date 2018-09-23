@@ -6,6 +6,9 @@ module Games
         knights = hand.position.last
         white = hand.white
         black = hand.black
+        puts '*' * 80
+        puts game.hands.count
+        puts '*' * 80
 
         render json: {white: white,
                       black: black,
