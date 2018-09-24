@@ -2,18 +2,12 @@ module Games
   module Hands
     class RoundsController < ApplicationController
       def show
-        cards = hand.cards
-        knights = hand.position.last
-        white = hand.white
-        black = hand.black
-        puts '*' * 80
-        puts game.hands.count
-        puts '*' * 80
-
-        render json: {white: white,
-                      black: black,
-                      knights: knights,
-                      cards: cards }
+        render json: {white: hand.white,
+                      black: hand.black,
+                      knights: hand.position.last,
+                      playerOne: game.players.first.name,
+                      playerTwo: game.players.last.name,
+                      cards: hand.cards }
       end
 
       def move

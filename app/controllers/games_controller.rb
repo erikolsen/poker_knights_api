@@ -14,8 +14,8 @@ class GameCreator
   def setup_game!
     begin
       @game = Game.create(slug: slug, stack: stack, big_blind: big_blind, small_blind: small_blind, timer: timer)
-      @game.add_player(player_one)
-      @game.add_player(player_two)
+      @game.add_player(player_one, 0)
+      @game.add_player(player_two, 1)
       @game.deal!
       return true
     rescue => e

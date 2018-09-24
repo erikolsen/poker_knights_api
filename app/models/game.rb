@@ -8,11 +8,12 @@ end
 
 class Game < ApplicationRecord
   has_many :hands
-  has_many :entrants
+  has_many :entrants, -> { order(:sequence) }
+  has_many :players, through: :entrants
 
-  def add_player(player_name)
+  def add_player(player_name, seq)
     player = Player.find_or_create_by(name: player_name)
-    entrants << Entrant.create(player: player)
+    entrants << Entrant.create(player: player, sequence: seq)
   end
 
   def deal!

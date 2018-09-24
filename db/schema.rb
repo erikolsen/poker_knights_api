@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2018_09_22_194829) do
   create_table "entrants", force: :cascade do |t|
     t.integer "game_id"
     t.integer "player_id"
+    t.integer "sequence"
     t.integer "stack"
   end
 
