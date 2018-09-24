@@ -1,7 +1,8 @@
 module Deck
   def self.shuffle!
-    suits = ['♠', '♥', '♦', '♣']
-    num = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+    #suits = ['♠', '♥', '♦', '♣']
+    suits = ['s', 'h', 'd', 'c']
+    num = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K']
     suits.map{|suit| num.map{|rank| rank + suit }}.flatten.shuffle
   end
 end
