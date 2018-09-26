@@ -5,6 +5,8 @@ class CreateEntrants < ActiveRecord::Migration[5.2]
       t.integer :player_id
       t.integer :sequence
       t.integer :stack
+      t.boolean :ready
+      t.timestamps
     end
   end
 end

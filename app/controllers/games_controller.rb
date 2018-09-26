@@ -13,9 +13,7 @@ class GameCreator
 
   def setup_game!
     begin
-      @game = Game.create(slug: slug, stack: stack, big_blind: big_blind, small_blind: small_blind, timer: timer)
-      @game.add_player(player_one, 0)
-      @game.add_player(player_two, 1)
+      @game = Game.create!(slug: slug, stack: stack, big_blind: big_blind, small_blind: small_blind, timer: timer)
       @game.deal!
       return true
     rescue => e
@@ -29,22 +27,47 @@ class GameCreator
 end
 
 class GamesController < ActionController::API
+  def show
+    render json: Game.find_by(slug: params[:id]).as_json
+  end
+
   def update_form
     LobbysChannel.broadcast_to game, {playerOne: params[:playerOne] } if params[:playerOne]
     LobbysChannel.broadcast_to game, {playerTwo: params[:playerTwo] } if params[:playerTwo]
-    LobbysChannel.broadcast_to game, {playerOneReady: params[:playerOneReady] } if params[:playerOneReady]
-    LobbysChannel.broadcast_to game, {playerTwoReady: params[:playerTwoReady] } if params[:playerTwoReady]
-    LobbysChannel.broadcast_to game, {stack: params[:stack] } if params[:stack]
-    LobbysChannel.broadcast_to game, {timer: params[:timer] } if params[:timer]
-    LobbysChannel.broadcast_to game, {blinds: params[:blinds] } if params[:blinds]
+    if params[:stack]
+      LobbysChannel.broadcast_to game, {stack: params[:stack] }
+      game.update(stack: params[:stack])
+    end
 
+    if params[:timer]
+      LobbysChannel.broadcast_to game, {timer: params[:timer] }
+      game.update(timer: params[:timer])
+    end
+
+    if params[:blinds]
+      LobbysChannel.broadcast_to game, {blinds: params[:blinds] }
+      game.update(big_blind: params[:big_blind])
+      game.update(small_blind: (params[:big_blind].to_i/2).floor)
+    end
+
+    if params[:playerOneReady]
+      LobbysChannel.broadcast_to game, {playerOneReady: params[:playerOneReady], playerOne: params[:playerOne] }
+      game.add_player(params[:playerOne], 1)
+      game.save!
+    end
+
+    if params[:playerTwoReady]
+      LobbysChannel.broadcast_to game, {playerTwoReady: params[:playerTwoReady],  playerTwo: params[:playerTwo] }
+      game.add_player(params[:playerTwo], 2)
+      game.save!
+    end
     render json: {success: 'Form updated'}
   end
 
   def create
     creator = GameCreator.new(params)
     if creator.setup_game!
-      render json: {success: 'Game Starting'}
+      render json: {gameId: creator.game.slug}
     else
       render json: {failure: 'Game failed to start'}
     end

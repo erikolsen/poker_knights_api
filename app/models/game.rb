@@ -14,7 +14,24 @@ class Game < ApplicationRecord
 
   def add_player(player_name, seq)
     player = Player.find_or_create_by(name: player_name)
-    entrants << Entrant.create(player: player, sequence: seq)
+    if !players.include? player && players.count <= 2
+      entrants << Entrant.create(player: player, sequence: seq, ready: true)
+    end
+  end
+
+  def player_one
+    entrants[0] if entrants.count <= 2 && entrants.count > 0
+  end
+
+  def player_two
+    entrants[1] if entrants.count == 2
+  end
+
+  def as_json
+    super.merge(playerOne: player_one&.player&.name || '',
+                playerOneReady: player_one&.ready || false,
+                playerTwo: player_two&.player&.name || '',
+                playerTwoReady: player_two&.ready || false)
   end
 
   def deal!

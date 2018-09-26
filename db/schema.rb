@@ -20,6 +20,9 @@ ActiveRecord::Schema.define(version: 2018_09_22_194829) do
     t.integer "player_id"
     t.integer "sequence"
     t.integer "stack"
+    t.boolean "ready"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "games", force: :cascade do |t|
