@@ -8,9 +8,10 @@ module Deck
 end
 
 class Game < ApplicationRecord
-  has_many :hands
+  has_many :hands, -> { order(:sequence) }
   has_many :entrants, -> { order(:sequence) }
   has_many :players, through: :entrants
+  validates :slug, uniqueness: true
 
   def add_player(player_name, seq)
     player = Player.find_or_create_by(name: player_name)

@@ -31,6 +31,15 @@ class GamesController < ActionController::API
     render json: Game.find_by(slug: params[:id]).as_json
   end
 
+  def next_hand
+    if game.deal!
+      HandsChannel.broadcast_to game, {newHandSeq: game.hands.last.sequence}
+      render json: {newHandSeq: game.hands.last.sequence}
+    else
+      render json: { status: :failure }
+    end
+  end
+
   def update_form
     LobbysChannel.broadcast_to game, {playerOne: params[:playerOne] } if params[:playerOne]
     LobbysChannel.broadcast_to game, {playerTwo: params[:playerTwo] } if params[:playerTwo]
