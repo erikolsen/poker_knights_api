@@ -37,7 +37,7 @@ Rails.application.configure do
   # config.action_cable.url = 'wss://example.com/cable'
   # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]
   config.web_socket_server_url = "ws://poker-knights-api.herokuapp.com/cable"
-  config.action_cable.allowed_request_origins = ['http://localhost:3001', 'http://poker-knights.surge.sh']
+  config.action_cable.allowed_request_origins = ['http://localhost:3001', 'http://poker-knights.surge.sh', 'http://poker-knights.com', 'http://www.poker-knights.com']
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
