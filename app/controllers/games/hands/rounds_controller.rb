@@ -5,9 +5,42 @@ module Games
         render json: {white: hand.white,
                       black: hand.black,
                       knights: hand.position.last,
-                      playerOne: game.players.first.name,
-                      playerTwo: game.players.last.name,
-                      cards: hand.cards }
+                      cards: hand.cards,
+                      pot: round.pot,
+                      bets: round.bets || []
+                     }.merge(game.as_json)
+      end
+
+      def call
+        player = params[:game][:player]
+        bet = params[:game][:bet]
+        round.add_bet(player, bet)
+        if round.save
+          RoundsChannel.broadcast_to round,
+            { showWinner: true,
+              bets: round.bets,
+              betting: false,
+              showBetBar: false,
+              pot: round.pot,
+              playerOneStack: game.player_one.stack,
+              playerTwoStack: game.player_two.stack}
+          render json: {success: true }
+        else
+          render json: {failure: true }
+        end
+      end
+
+      def bet
+        player = params[:game][:player]
+        bet = params[:game][:bet]
+        round.add_bet(player, bet)
+        #player = round.entrant_for(player)
+        if round.save
+          RoundsChannel.broadcast_to round, {bets: round.bets, pot: round.pot, playerOneStack: game.player_one.stack, playerTwoStack: game.player_two.stack, betting: true, showBetBar: true}
+          render json: {success: true }
+        else
+          render json: {failure: true }
+        end
       end
 
       def move
@@ -31,7 +64,8 @@ module Games
       end
 
       def round
-        @round ||= hand.rounds.where(sequence: params[:id]).first
+        #@round ||= hand.rounds.where(sequence: params[:id]).first ||
+        @round ||= hand.rounds.first
       end
 
     end

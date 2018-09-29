@@ -4,6 +4,7 @@ class CreateRounds < ActiveRecord::Migration[5.2]
       t.integer :hand_id
       t.integer :sequence
       t.integer :pot
+      t.text :bets
     end
   end
 end

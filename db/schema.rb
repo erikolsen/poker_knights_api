@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 2018_09_22_194829) do
     t.integer "hand_id"
     t.integer "sequence"
     t.integer "pot"
+    t.text "bets"
   end
 
 end

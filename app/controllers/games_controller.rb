@@ -17,7 +17,8 @@ class GameCreator
       @game.deal!
       return true
     rescue => e
-      puts 'Error Setting up Game*' * 80
+      puts '*' * 80
+      puts 'Error Setting up Game*'
       puts e
       puts '*' * 80
       return false

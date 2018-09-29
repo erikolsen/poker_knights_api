@@ -8,6 +8,9 @@ Rails.application.routes.draw do
         scope module: :hands do
           resources :rounds, only: [:show] do
             post :move
+            post :bet
+            post :call
+            post :fold
           end
         end
       end
