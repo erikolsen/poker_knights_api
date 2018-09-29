@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 2018_09_22_194829) do
     t.integer "big_blind"
     t.integer "small_blind"
     t.integer "timer"
+    t.boolean "private"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

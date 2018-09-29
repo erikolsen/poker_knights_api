@@ -6,6 +6,7 @@ class CreateGames < ActiveRecord::Migration[5.2]
       t.integer :big_blind
       t.integer :small_blind
       t.integer :timer
+      t.boolean :private
 
       t.timestamps
     end
