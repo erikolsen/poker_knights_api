@@ -28,6 +28,10 @@ class GameCreator
 end
 
 class GamesController < ActionController::API
+  def players
+    render json: Player.all.as_json.unshift({PLAYER_COUNT: Player.count, GAME_COUNT: Game.count})
+  end
+
   def show
     render json: Game.find_by(slug: params[:id]).as_json
   end
