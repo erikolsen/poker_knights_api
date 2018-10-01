@@ -11,13 +11,23 @@ module Games
                      }.merge(game.as_json)
       end
 
+      def fold
+        player = Player.find_by(name: params[:player])
+        winner = game.opponent_of(player)
+        winner.stack += round.pot
+
+        if winner.save
+          game.deal!
+          HandsChannel.broadcast_to game, {newHandSeq: game.hands.last.sequence}
+          render json: {success: true }
+        else
+          render json: {failure: true }
+        end
+      end
+
       def winner
         color = params[:winner]
         winner = color == 'white' ? game.player_one : game.player_two
-        puts '*' * 80
-        puts winner.stack
-        puts round.pot
-        puts '*' * 80
         winner.stack += round.pot
 
         if winner.save

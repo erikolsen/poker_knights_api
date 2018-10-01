@@ -13,6 +13,14 @@ class Game < ApplicationRecord
   has_many :players, through: :entrants
   validates :slug, uniqueness: true
 
+  def entrant_for(player)
+    entrants.where(player_id: player.id).first
+  end
+
+  def opponent_of(player)
+    entrants.where.not(player_id: player.id).first
+  end
+
   def add_player(player_name, seq)
     player = Player.find_or_create_by(name: player_name)
     if !players.include? player && players.count <= 2
