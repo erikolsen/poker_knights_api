@@ -11,6 +11,7 @@ Rails.application.routes.draw do
             post :bet
             post :call
             post :fold
+            post :winner
           end
         end
       end

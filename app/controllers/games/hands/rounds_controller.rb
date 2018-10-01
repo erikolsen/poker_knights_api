@@ -11,6 +11,30 @@ module Games
                      }.merge(game.as_json)
       end
 
+      def winner
+        color = params[:winner]
+        winner = color == 'white' ? game.player_one : game.player_two
+        puts '*' * 80
+        puts winner.stack
+        puts round.pot
+        puts '*' * 80
+        winner.stack += round.pot
+
+        if winner.save
+          RoundsChannel.broadcast_to round,
+            { showWinner: true,
+              bets: round.bets,
+              betting: false,
+              showBetBar: false,
+              pot: 0,
+              playerOneStack: game.player_one.stack,
+              playerTwoStack: game.player_two.stack}
+          render json: {success: true }
+        else
+          render json: {failure: true }
+        end
+      end
+
       def call
         player = params[:game][:player]
         bet = params[:game][:bet]
