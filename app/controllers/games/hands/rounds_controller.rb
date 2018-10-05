@@ -5,6 +5,7 @@ module Games
         render json: {white: hand.white,
                       black: hand.black,
                       knights: hand.position.last,
+                      position: hand.position,
                       cards: hand.cards,
                       pot: round.pot,
                       bets: round.bets || []
@@ -37,6 +38,7 @@ module Games
               betting: false,
               showBetBar: false,
               pot: 0,
+              position: hand.position,
               playerOneStack: game.player_one.stack,
               playerTwoStack: game.player_two.stack}
           render json: {success: true }
@@ -56,6 +58,7 @@ module Games
               betting: false,
               showBetBar: false,
               pot: round.pot,
+              position: hand.position,
               playerOneStack: game.player_one.stack,
               playerTwoStack: game.player_two.stack}
           render json: {success: true }
@@ -70,7 +73,14 @@ module Games
         round.add_bet(player, bet)
         #player = round.entrant_for(player)
         if round.save
-          RoundsChannel.broadcast_to round, {bets: round.bets, pot: round.pot, playerOneStack: game.player_one.stack, playerTwoStack: game.player_two.stack, betting: true, showBetBar: true}
+          RoundsChannel.broadcast_to round,
+            { bets: round.bets,
+              pot: round.pot,
+              position: hand.position,
+              playerOneStack: game.player_one.stack,
+              playerTwoStack: game.player_two.stack,
+              betting: true,
+              showBetBar: true }
           render json: {success: true }
         else
           render json: {failure: true }
